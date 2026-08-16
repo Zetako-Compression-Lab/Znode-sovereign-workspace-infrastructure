@@ -19,20 +19,28 @@ ZNode started as a private, self-hosted communication node and progressively evo
 What matters is not only the feature set, but the **trajectory**: each layer added operational depth, stronger governance, and a clearer path toward enterprise-grade deployment.
 
 ```mermaid
-flowchart LR
-    A[Self-hosted local-first node] --> B[Private messaging and file exchange]
-    B --> C[Structured workspace]
-    C --> D[Group collaboration]
-    D --> E[Voice, video and meetings]
-    E --> F[SFU-based real-time communication]
-    F --> G[Compliance, policy and audit governance]
-    G --> H[Agent-ready controlled execution]
-    H --> I[Maintenance and pilot operations]
-    I --> J[Client and pilot release engineering]
-    J --> K[Sovereign workspace infrastructure]
+flowchart TB
+    subgraph P1["1 · Foundation"]
+        direction LR
+        A["Local-first node"] --> B["Private messaging<br/>+ file exchange"] --> C["Structured workspace"]
+    end
+
+    subgraph P2["2 · Collaboration & Real-Time"]
+        direction LR
+        D["Group collaboration"] --> E["Voice, video<br/>+ meetings"] --> F["SFU real-time<br/>communication"]
+    end
+
+    subgraph P3["3 · Governance & Operations"]
+        direction LR
+        G["Compliance, policy<br/>+ audit"] --> H["Agent-ready<br/>execution"] --> I["Maintenance<br/>+ pilot operations"] --> J["Client / pilot<br/>release engineering"]
+    end
+
+    C --> D
+    F --> G
+    J --> K["Sovereign workspace<br/>infrastructure"]
 ```
 
-This progression reflects how ZNode evolved from a communication core into a broader platform designed for organizations that need to control their communications, workflows, data, governance, and operational environment.
+**From a local communication node to a governed sovereign workspace:** communication → collaboration → real-time media → compliance → agent control → operations → deployment engineering.
 
 For the detailed public milestone narrative, see [`docs/PRODUCT_EVOLUTION.md`](docs/PRODUCT_EVOLUTION.md).
 
