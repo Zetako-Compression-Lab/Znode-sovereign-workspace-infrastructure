@@ -39,6 +39,21 @@ ZNode already exposes useful request and runtime observability, including:
 
 Current `/metrics` counters are not percentile histograms. Public p50/p95/p99 results will therefore be based on real request samples or histogram instrumentation rather than derived from averages.
 
+## Live latency baseline
+
+A first instrumented external baseline has now been published for the public development deployment.
+
+The key result is that the measured cold-request wall time is dominated by the external network/TCP/TLS/public ingress path rather than ZNode application processing:
+
+| Endpoint | Total p50 | ZNode backend p50 | DB p50 |
+|---|---:|---:|---:|
+| `GET /healthz` | **2,304.53 ms** | **1.14 ms** | **0.00 ms** |
+| `GET /login` | **1,191.04 ms** | **21.53 ms** | **8.02 ms** |
+
+The detailed report preserves DNS, TCP, TLS, first-byte, download, backend, and database timings so the same methodology can be repeated after infrastructure optimization.
+
+See [`LIVE_LATENCY_BASELINE.md`](LIVE_LATENCY_BASELINE.md).
+
 ## Evidence classes
 
 ### MEASURED BENCHMARK
