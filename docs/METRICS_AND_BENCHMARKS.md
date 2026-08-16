@@ -52,6 +52,8 @@ The key result is that the measured cold-request wall time is dominated by the e
 
 The detailed report preserves DNS, TCP, TLS, first-byte, download, backend, and database timings so the same methodology can be repeated after infrastructure optimization.
 
+A first optimization pass has also been recorded, including immutable caching for static/public media assets, reverse-proxy upstream keep-alive, and a reduction in login settings reads. A separate 8-sample HTTP/2 diagnostic comparison found materially lower median latency when reusing an existing connection: `/healthz` moved from **1,384.53 ms cold** to **222.08 ms warm**, and `/login` from **2,595.61 ms cold** to **858.89 ms warm**. These warm observations are diagnostic and are not presented as a replacement for the original 20-request baseline.
+
 See [`LIVE_LATENCY_BASELINE.md`](LIVE_LATENCY_BASELINE.md).
 
 ## Evidence classes
@@ -227,6 +229,7 @@ For that reason, ZNode reports avoid mixing:
 
 - service-only timing with end-to-end user timing;
 - LAN and Internet latency without labeling network conditions;
+- cold connections with warm/reused connections without explicit labeling;
 - idle-resource figures with active-load figures;
 - pilot observations with synthetic load tests;
 - configured profile limits with validated load ceilings;
