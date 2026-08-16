@@ -1,8 +1,43 @@
 # ZNode Metrics and Benchmarks
 
-This document defines how Zetako intends to publish ZNode performance and operational evidence.
+This document defines how Zetako publishes ZNode performance and operational evidence.
 
 The objective is to make each public number understandable in context rather than presenting isolated headline figures.
+
+## Current engineering snapshot
+
+The current repository/tooling snapshot provides the following directly measurable engineering figures:
+
+| Metric | Current value | Evidence type |
+|---|---:|---|
+| Active product code | **285,103 lines** | Static count excluding tests/docs/reports/build/dist/node_modules/caches |
+| Active product files | **671** | Static count |
+| Automated test suite | **1,613 tests** | Pytest collection |
+| Test files | **134** | Static count across root, z-connect and zmedia tests |
+| HTTP routes | **327** | Static route scan |
+| WebSocket routes | **2** | Static route scan |
+| Known Python dependency vulnerabilities | **0 detected** | `pip-audit` against `requirements.txt` |
+| Agent tools exposed | **6 read-only** | Current agent tool registry |
+| Compliance export data types | **9** | Current compliance model |
+| Compliance case states | **6** | Current compliance model |
+| Supported production room profile | **10 participants** | Configuration/profile limit, not load-test ceiling |
+| z-connect HTTP rate limit | **60 req/s** | Configured default |
+| z-connect WebSocket rate limit | **120 messages/s** | Configured default |
+
+These metrics describe codebase/configuration state rather than end-to-end performance.
+
+## Existing observability
+
+ZNode already exposes useful request and runtime observability, including:
+
+- `X-Request-ID`;
+- `X-Response-Time-Ms`;
+- `X-ZNode-DB-Query-Count`;
+- `X-ZNode-DB-Query-Time-Ms`;
+- `Server-Timing`;
+- an admin-protected `/metrics` endpoint with route/status counters and average timing.
+
+Current `/metrics` counters are not percentile histograms. Public p50/p95/p99 results will therefore be based on real request samples or histogram instrumentation rather than derived from averages.
 
 ## Evidence classes
 
@@ -32,9 +67,17 @@ A planned capacity, scaling objective, or design target that has not yet been va
 
 Targets will be labeled clearly and will not be presented as achieved capacity.
 
-## Planned metric families
+### CONFIGURED PROFILE
+
+A supported or default configuration value such as a room participant limit or rate-limit setting.
+
+A configured profile is **not** automatically equivalent to measured capacity.
+
+## Metric families being measured
 
 ### API
+
+Planned public measurements:
 
 - request latency p50 / p95 / p99;
 - request throughput;
@@ -42,52 +85,76 @@ Targets will be labeled clearly and will not be presented as achieved capacity.
 - authentication latency;
 - selected high-value endpoint measurements.
 
+Initial scenarios include login, send message, open conversation, search, file upload/download, and meeting creation.
+
 ### Messaging
 
-- message delivery latency;
+Planned public measurements:
+
+- client→server→client message delivery latency;
 - sustained messages per second;
 - concurrent WebSocket connections;
 - connection setup time;
 - reconnection behavior after interruption;
 - message fan-out behavior for group spaces.
 
+The current z-connect WebSocket rate-limit default is **120 messages/s**. This is a configured abuse-control value, not a validated throughput ceiling.
+
 ### Meetings and SFU
 
+The current supported production room profile is **10 participants per room**.
+
+The production configuration requires SFU topology by default and does not treat higher room sizes as supported production capacity unless explicitly overridden.
+
+Dedicated benchmarks will measure:
+
 - concurrent meeting rooms;
-- concurrent participants;
+- participants at supported profiles;
 - SFU CPU utilization;
 - SFU memory utilization;
 - ingress/egress bandwidth;
 - join latency;
-- media latency where measurable;
-- jitter and packet loss where measurable;
+- media latency;
+- jitter and packet loss;
 - behavior under defined participant mixes.
 
 ### Files and storage
+
+Current configured controls include per-user upload and storage quotas, ACL checks, preview/thumbnail paths, and cleanup behavior.
+
+Public performance measurements will cover:
 
 - upload throughput;
 - download throughput;
 - small-file versus large-file behavior;
 - concurrent file operations;
-- preview-generation latency where applicable;
+- preview-generation latency;
 - storage growth under representative workloads.
 
 ### Infrastructure footprint
 
+Planned measurements:
+
 - idle CPU;
 - idle RAM;
-- CPU under representative load;
-- RAM under representative load;
-- persistent storage footprint;
-- temporary storage behavior;
+- base storage footprint;
+- CPU/RAM under 10, 25 and 50 active-user scenarios where applicable;
+- process/service footprint;
 - network use;
-- GPU use or non-requirement for defined features.
+- GPU requirement or non-requirement for defined features.
+
+The current V1 production profile is documented around a single-node deployment with a single FastAPI worker, SQLite and local filesystem storage.
 
 ### Deployment
 
+The public repository currently records an internally measured **3 min 40 sec precompiled deployment example**.
+
+A dedicated deployment report will add the exact machine profile, artifact state, included/excluded steps, and health criteria.
+
+Additional measurements will include:
+
 - clean-host deployment time;
-- precompiled deployment time;
-- time to healthy services;
+- time to green healthcheck;
 - restart time;
 - upgrade time;
 - rollback time where supported;
@@ -95,12 +162,15 @@ Targets will be labeled clearly and will not be presented as achieved capacity.
 
 ### Reliability
 
+Planned evidence:
+
 - service availability;
-- error rate;
+- API error rate;
 - crash-free runtime;
 - unexpected service restarts;
-- failed jobs/queues where applicable;
-- recovery time after controlled failure scenarios.
+- failed jobs/queues;
+- recovery time after controlled failure scenarios;
+- MTTR when sufficient incident history exists.
 
 ### Pilot usage
 
@@ -120,34 +190,43 @@ Where publication is privacy-safe, anonymized aggregate pilot metrics may includ
 
 ## Statistical reporting
 
-Where latency distributions matter, Zetako intends to publish percentiles rather than averages alone.
+Where latency distributions matter, Zetako publishes percentiles rather than averages alone.
 
-Typical reporting fields will include:
+Typical reporting fields include:
 
 - p50;
 - p95;
 - p99;
-- minimum/maximum only when useful;
+- error rate;
+- sustained throughput;
 - test duration;
 - sample count.
+
+Percentiles will be calculated from real samples. Error rate is reported as failed requests divided by total requests, and throughput is reported over an explicit measurement window.
 
 ## Comparison principle
 
 A result is only directly comparable to another result when the workload, measurement boundary, and environment are sufficiently similar.
 
-For that reason, ZNode reports will avoid mixing:
+For that reason, ZNode reports avoid mixing:
 
-- codec/service-only timing with end-to-end user timing;
+- service-only timing with end-to-end user timing;
 - LAN and Internet latency without labeling network conditions;
 - idle-resource figures with active-load figures;
 - pilot observations with synthetic load tests;
+- configured profile limits with validated load ceilings;
 - architectural targets with validated capacity.
 
-## Initial figures awaiting full report
+## Benchmark campaign
 
-The first public repository snapshot records two facts already tracked internally:
+The next evidence campaign is structured around:
 
-- **1,500+ automated tests** in the current ZNode engineering suite;
-- a **3 min 40 sec precompiled deployment example**.
+1. API scenario load tests for p50/p95/p99, errors and request rate;
+2. two-client messaging/WebSocket scenarios for delivery latency, throughput and reconnect behavior;
+3. SFU runs at supported 5- and 10-participant profiles with CPU/RAM/network/WebRTC stats;
+4. file transfer matrices across representative size buckets;
+5. controlled deployment timing;
+6. runtime footprint sampling at idle and defined active-user loads;
+7. anonymized pilot usage and reliability exports.
 
-These are intentionally marked as initial snapshot figures. Dedicated reports will provide environment, methodology, scope, and repeatability evidence before they are used as stronger performance claims.
+Each published result will retain its measurement boundary and environment so future product versions can be compared on equivalent terms.
