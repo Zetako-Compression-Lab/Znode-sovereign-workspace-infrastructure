@@ -61,6 +61,44 @@ ZNode is developed as infrastructure rather than as a thin hosted front end. The
 
 ---
 
+## Deployment scope — single-node by design
+
+ZNode is intentionally designed as a **single-node sovereign workspace**.
+
+The supported architecture is optimized for organizations that want one controlled deployment boundary rather than a horizontally distributed, multi-region SaaS platform.
+
+A standard ZNode deployment is designed around:
+
+- one customer-controlled node;
+- one application runtime;
+- local persistent application state;
+- local filesystem-backed workspace data;
+- SQLite for transactional application state;
+- local or co-located communication and media services;
+- a reverse-proxy / TLS boundary;
+- explicit backup, recovery, maintenance, and support workflows.
+
+This architecture is deliberate.
+
+ZNode is **not** currently designed as a horizontally sharded SaaS service where many application workers concurrently write to a distributed database across multiple regions or nodes.
+
+Within the supported single-node model, SQLite provides useful properties for sovereign infrastructure:
+
+- no external database service dependency;
+- low operational complexity;
+- deterministic local ownership of application state;
+- straightforward backup and recovery;
+- compact deployment footprint;
+- fewer infrastructure components to administer and secure.
+
+The relevant engineering question is therefore not whether SQLite can support arbitrary hyperscale SaaS workloads. The relevant question is whether the **complete ZNode node** can support its defined user, messaging, workspace, meeting, governance, and operational workload on the supported deployment profile.
+
+That capacity will be established through published load, latency, resource, and concurrency benchmarks.
+
+> **Capacity figures in this repository apply to the supported single-node architecture. They should not be interpreted as claims about horizontally distributed, clustered, or multi-region deployments.**
+
+---
+
 ## Validated engineering snapshot
 
 The current engineering snapshot is based on repository inspection and local tooling against the active ZNode workspace.
@@ -128,6 +166,8 @@ Planned measurements include:
 - host CPU/RAM behavior at defined load levels.
 
 ZNode already exposes request-level observability such as response timing, database query counts/timing, `Server-Timing`, request identifiers, and an admin-protected `/metrics` endpoint. Percentile benchmark publication will use real scenario samples rather than infer p50/p95/p99 from averages.
+
+All capacity and performance reports must be interpreted within ZNode's **single-node supported deployment scope** and with the reference machine, runtime configuration, storage model, media settings, and network conditions stated explicitly.
 
 See [`docs/METRICS_AND_BENCHMARKS.md`](docs/METRICS_AND_BENCHMARKS.md).
 
@@ -257,6 +297,8 @@ An anonymized observation from a real operating environment. Useful for understa
 A design objective, planned capacity, or expected scaling direction that has **not yet been validated as a measured result**.
 
 Targets will never be presented as validated capacity.
+
+**Scope note:** ZNode benchmark and capacity claims refer to the supported single-node architecture unless a report explicitly states otherwise.
 
 ---
 
