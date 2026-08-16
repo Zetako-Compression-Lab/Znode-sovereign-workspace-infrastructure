@@ -44,11 +44,13 @@ The reference topology is intentionally narrow:
 
 | Service | Role | Reference binding |
 |---|---|---|
-| `caddy` | HTTPS termination and reverse proxy | Public `:443` |
-| `zetako-node.service` | Main ZNode FastAPI app | `127.0.0.1:8000` |
-| `z-connect.service` | Signaling/control sidecar | `127.0.0.1:8010` |
-| `z-connect-sfu.service` | SFU sidecar | Control API on `127.0.0.1:8787`; WebRTC media ports public |
-| `coturn` | TURN relay | Public TURN/TURNS ports as configured |
+| `caddy` | HTTPS termination and reverse proxy | Public HTTPS ingress |
+| `zetako-node.service` | Main ZNode FastAPI app | Local loopback upstream |
+| `z-connect.service` | Signaling/control sidecar | Local loopback service |
+| `z-connect-sfu.service` | SFU sidecar | Local control service; WebRTC media transport exposed only as required by deployment configuration |
+| `coturn` | TURN relay | Public TURN/TURNS transport as configured |
+
+Exact internal port assignments are intentionally omitted from the public reference profile. The important architectural property is that application and control services remain local/internal while Caddy owns the primary public HTTPS ingress.
 
 ## Production Constraints
 
