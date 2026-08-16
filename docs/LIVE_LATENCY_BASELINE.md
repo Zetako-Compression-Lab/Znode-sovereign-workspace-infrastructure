@@ -13,7 +13,7 @@ Target deployment: `https://dev.zetako.ai`
 Measurement method:
 
 - unauthenticated public endpoints only;
-- 20 cold requests per endpoint;
+- 20 cold requests per endpoint for the original baseline;
 - `/usr/bin/curl`;
 - response headers captured;
 - DNS, TCP, TLS, first-byte and total timings recorded;
@@ -63,21 +63,60 @@ The health endpoint performs no database work in this baseline. Optimizing ZNode
 
 SQLite/database work on this request measured approximately **8.02 ms p50**. Within ZNode's supported single-node architecture, this baseline does not identify SQLite as the dominant latency source.
 
+## Optimization work applied after the baseline
+
+The first optimization pass deliberately focused on low-risk changes that improve repeated page access and connection reuse without changing ZNode's core architecture.
+
+| Area | Change | Expected effect |
+|---|---|---|
+| Static assets | `/static`, public avatar media, and public group avatar media now emit `Cache-Control: public, max-age=31536000, immutable`; deployment proxy configuration applies the same policy to those paths | Repeat page loads avoid unnecessary static transfers and validations |
+| Reverse-proxy upstream | Caddy deployment baselines now configure upstream keep-alive with `keepalive 2m` | Reduces connection churn between the TLS terminator and the local application runtime |
+| Login settings reads | Login branding and theme settings are obtained through one login-surface settings read rather than separate reads | Reduces database work on `GET /login`; expected gain is small compared with network/TLS cost |
+| Regression safety | Static cache behavior and targeted login/health/settings/browser tests were added/rerun | Confirms that optimization changes preserve intended application and security behavior |
+
+These changes should not be interpreted as a completed performance campaign. They are the first controlled improvements applied after the measurement decomposition identified the dominant latency boundary.
+
+## Cold vs warm HTTP/2 observation
+
+A follow-up observation compared new cold connections with requests that reused the same HTTP/2 connection from the same test machine.
+
+This is a separate observation from the 20-request baseline above and uses **8 samples per mode**.
+
+| Endpoint | Mode | Samples | p50 | p95 | Avg | Min | Max |
+|---|---|---:|---:|---:|---:|---:|---:|
+| `GET /healthz` | Cold, separate curl processes | 8 | **1,384.53 ms** | 3,364.19 ms | 1,717.80 ms | 1,069.02 ms | 3,364.19 ms |
+| `GET /healthz` | Warm, same curl process / connection reuse | 8 | **222.08 ms** | 2,075.98 ms | 465.67 ms | 221.27 ms | 2,075.98 ms |
+| `GET /login` | Cold, separate curl processes | 8 | **2,595.61 ms** | 4,174.02 ms | 2,731.58 ms | 1,775.17 ms | 4,174.02 ms |
+| `GET /login` | Warm, same curl process / connection reuse | 8 | **858.89 ms** | 3,074.41 ms | 921.42 ms | 220.04 ms | 3,074.41 ms |
+
+### Interpretation
+
+Connection reuse materially improves the observed public path, especially for `/healthz`.
+
+For the median sample in this observation:
+
+- `/healthz` improved from **1,384.53 ms cold** to **222.08 ms warm**;
+- `/login` improved from **2,595.61 ms cold** to **858.89 ms warm**.
+
+These samples should **not** be treated as a direct before/after product benchmark because they use a smaller follow-up sample set and different connection behavior. Their purpose is diagnostic: they reinforce the conclusion that connection establishment, TLS, and routing distance dominate the current public request path.
+
+The local curl build used for this test supports HTTP/2 but not HTTP/3. A QUIC/HTTP/3 comparison remains a separate future measurement.
+
 ## Where the time is going
 
-The first optimization target is the public connection path rather than FastAPI application processing.
+The first optimization target remains the public connection path rather than FastAPI application processing.
 
 Current priorities are:
 
 1. **TCP/TLS path** — routing, host region, TLS terminator, certificate chain, OCSP behavior and handshake cost.
 2. **Edge/proxy placement** — reduce distance between users and the TLS/public ingress boundary.
 3. **HTTP/3 validation** — the server advertises HTTP/3 support; compare QUIC against the HTTP/2 cold-request baseline.
-4. **Connection reuse** — compare cold handshakes with warm keep-alive/session-resumed requests.
+4. **Connection reuse** — the warm HTTP/2 observation confirms that reuse can materially reduce the public-path cost.
 5. **Login application polish** — optional optimization of the ~21.53 ms backend p50 and ~8.02 ms DB p50 after infrastructure latency is addressed.
 
 ## Baseline for future comparison
 
-This report should not be overwritten after optimization.
+The original baseline is intentionally retained.
 
 Future measurements should preserve the same endpoint and methodology where possible and publish a comparison such as:
 
@@ -90,12 +129,14 @@ The comparison should also track p95/p99 and connection failures so improvements
 
 ## Interpretation boundary
 
-This report measures one development deployment from one external test path using cold requests.
+This report currently contains two measurement sets:
 
-It does not establish:
+1. the original 20-sample cold external baseline;
+2. a smaller 8-sample cold-vs-warm HTTP/2 diagnostic observation.
+
+Neither establishes:
 
 - global user latency;
-- warm-connection latency;
 - authenticated workflow latency;
 - application throughput;
 - SFU/media capacity;
@@ -105,4 +146,4 @@ Those measurements are tracked separately under the broader ZNode benchmark prog
 
 ---
 
-**Summary:** the initial external baseline shows that ZNode application processing is fast on the measured public endpoints — approximately **1.14 ms p50** for `/healthz` and **21.53 ms p50** for `/login` — while the dominant latency currently sits in the network/TCP/TLS/public ingress path.
+**Summary:** the initial external baseline shows that ZNode application processing is fast on the measured public endpoints — approximately **1.14 ms p50** for `/healthz` and **21.53 ms p50** for `/login` — while the dominant latency currently sits in the network/TCP/TLS/public ingress path. Follow-up warm HTTP/2 observations show that connection reuse materially reduces that external cost.
