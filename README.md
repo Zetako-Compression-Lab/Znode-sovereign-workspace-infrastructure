@@ -35,19 +35,31 @@ ZNode is developed as infrastructure rather than as a thin hosted front end. The
 
 ---
 
-## Public engineering snapshot
+## Validated engineering snapshot
 
-The repository is being opened while ZNode is already under active development and pilot use. The first public snapshot includes the following internally measured or tracked figures:
+The current engineering snapshot is based on repository inspection and local tooling against the active ZNode workspace.
 
-| Metric | Current public snapshot | Evidence status |
-|---|---:|---|
-| Automated tests | **1,500+** | Current internal suite count; detailed breakdown to be published |
-| Precompiled deployment | **3 min 40 sec** | Measured deployment example; environment and methodology report to be published |
-| Source availability | Proprietary | Public repository contains technical evidence and documentation only |
-| Deployment model | Self-hosted / controlled infrastructure | Deployment profiles to be documented |
-| Media architecture | SFU-based real-time communication | Capacity and resource benchmarks to be published |
+| Metric | Current evidence |
+|---|---:|
+| Active product code | **285,103 active lines** across **671 files** |
+| Automated test suite | **1,613 automated tests** |
+| Test files | **134** |
+| HTTP route surface | **327 routes** |
+| WebSocket route surface | **2 routes** |
+| Known Python dependency vulnerabilities | **0 detected** by `pip-audit` against `requirements.txt` |
+| Agent tools exposed | **6 read-only tools** |
+| Compliance export data types | **9 scoped data types** |
+| Compliance case states | **6** |
+| Supported production meeting profile | **10 participants per room** |
+| z-connect HTTP rate-limit default | **60 req/s** |
+| z-connect WebSocket rate-limit default | **120 messages/s** |
+| Precompiled deployment example | **3 min 40 sec** — full environment report pending |
 
-These figures are **not universal guarantees**. Every performance number published by Zetako will be tied to its hardware, software version, workload, network conditions, measurement scope, and test methodology.
+The active-line count excludes tests, documentation, reports, build output, distribution artifacts, `node_modules`, and caches. The test count represents the current automated test suite; detailed execution and category reports will be published separately.
+
+The dependency result means that the dependency set resolved from `requirements.txt` had **no known vulnerabilities reported by the audit tool at the time of the scan**. It is not a blanket statement that the complete application has no vulnerabilities.
+
+The **10-participant meeting figure is a supported production profile limit, not a measured concurrency ceiling**. Dedicated SFU capacity benchmarks will be published separately.
 
 ---
 
@@ -88,6 +100,8 @@ Planned measurements include:
 - SFU bandwidth characteristics;
 - media latency, jitter, and packet-loss observations where measurable;
 - host CPU/RAM behavior at defined load levels.
+
+ZNode already exposes request-level observability such as response timing, database query counts/timing, `Server-Timing`, request identifiers, and an admin-protected `/metrics` endpoint. Percentile benchmark publication will use real scenario samples rather than infer p50/p95/p99 from averages.
 
 See [`docs/METRICS_AND_BENCHMARKS.md`](docs/METRICS_AND_BENCHMARKS.md).
 
@@ -145,16 +159,9 @@ See [`docs/OPERATING_MODES.md`](docs/OPERATING_MODES.md).
 
 Sovereignty answers **where infrastructure and data are controlled**. Governance answers **how that environment is administered, evidenced, and reviewed**.
 
-ZNode's Compliance Center is intended to centralize compliance-oriented operational controls and evidence around areas such as:
+The current Compliance Center model includes **9 scoped exportable data types** covering messages, attachment metadata, file binaries, meetings, calls, calendar data, workspace permissions, audit events, and login events.
 
-- access governance;
-- administrative roles and permissions;
-- policy configuration;
-- auditability;
-- security-event visibility;
-- guest and external-user governance;
-- operational evidence;
-- agent governance where agent capabilities are enabled.
+Compliance cases move through **6 defined states**: draft, pending approval, approved, export ready, closed, and rejected. Export generation requires the `admin:compliance` permission and second-administrator approval before scoped data is produced.
 
 The conceptual model is:
 
@@ -170,36 +177,19 @@ Review
 
 ZNode does not claim that installing software automatically makes an organization compliant with a regulation or certification framework. Compliance depends on deployment, configuration, procedures, organizational responsibilities, legal context, and operational practice.
 
-Public documentation will therefore distinguish between:
-
-- controls ZNode provides;
-- evidence ZNode can produce;
-- configuration choices made by the customer;
-- external compliance obligations that remain the customer's responsibility.
-
 See [`docs/COMPLIANCE_CENTER.md`](docs/COMPLIANCE_CENTER.md).
 
 ---
 
 ## Security and testing
 
-ZNode's public security documentation will focus on **security posture and validation evidence without publishing operational details that would weaken deployed systems**.
+The current ZNode engineering suite contains **1,613 automated tests across 134 test files**.
 
-The current automated test suite contains **more than 1,500 tests**. Future public breakdowns will distinguish categories such as:
+Coverage represented in the repository includes authentication and route protection, permissions and ACLs, messaging, workspace, storage, meetings/RTC, browser workflows, database migrations, agent scopes and execution controls, deployment behavior, policy handling, and security regressions.
 
-- backend unit/service tests;
-- API and integration tests;
-- frontend tests;
-- end-to-end workflows;
-- authentication and authorization tests;
-- permission and policy regression tests;
-- meeting/media tests;
-- storage tests;
-- agent execution and confirmation tests;
-- security regression tests;
-- deployment/migration validation.
+A dependency audit using `pip-audit` against `requirements.txt` reported **0 known dependency vulnerabilities** for the resolved dependency set at the time of the scan.
 
-Security publications will focus on defensive evidence: authentication controls, permission boundaries, session behavior, administrative isolation, auditability, regression coverage, dependency posture, and security-test methodology.
+Security publications focus on defensive evidence: authentication controls, permission boundaries, session behavior, administrative isolation, auditability, regression coverage, dependency posture, and security-test methodology.
 
 Sensitive exploit paths, credentials, internal secrets, and deployment-specific defensive details will not be published.
 
@@ -211,20 +201,20 @@ See [`docs/SECURITY_AND_TESTING.md`](docs/SECURITY_AND_TESTING.md).
 
 ZNode includes an agent-ready architecture intended to let automated systems operate through explicit internal contracts rather than unrestricted application access.
 
-The architecture includes concepts such as:
+The current public registry exposes **6 read-only tools**:
 
-- scoped tool registries;
-- authenticated agent integrations;
-- execution gateways;
-- visible agent principals;
-- action ledgers;
-- confirmation queues for sensitive actions.
+- `audit.search`;
+- `calendar.list_events`;
+- `meetings.list`;
+- `messages.search`;
+- `storage.search`;
+- `users.list`.
 
-The public evidence layer will document the governance and security model without exposing proprietary implementation details or credentials.
+The current default registry exposes **0 write tools**. Agent infrastructure also includes authenticated integrations, visible agent principals, execution controls, action ledgering, and confirmation-queue foundations for sensitive actions.
 
 ---
 
-## How Zetako will publish metrics
+## How Zetako publishes metrics
 
 Performance claims are easy to make misleading. ZNode therefore uses three labels for public measurements.
 
@@ -244,12 +234,13 @@ Targets will never be presented as validated capacity.
 
 ---
 
-## Planned evidence structure
+## Evidence structure
 
 ```text
 /
 ├── README.md
 └── docs/
+    ├── PRODUCT_EVOLUTION.md
     ├── DEPLOYMENT.md
     ├── OPERATING_MODES.md
     ├── COMPLIANCE_CENTER.md
@@ -286,7 +277,7 @@ Future additions are expected to include dedicated reports for:
 - test-suite statistics;
 - compliance/governance model;
 - technical diagrams and evidence;
-- version evolution and engineering milestones.
+- product evolution and engineering milestones.
 
 ### Private / controlled distribution
 
