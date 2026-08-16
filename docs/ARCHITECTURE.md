@@ -18,7 +18,7 @@ flowchart TB
     DB[("SQLite<br/>transactional state")]
     FS[("Local filesystem<br/>workspace + media + uploads")]
     ZC["z-connect<br/>signaling / RTC control"]
-    SFU["mediasoup SFU<br/>media forwarding"]
+    SFU["SFU<br/>media forwarding"]
     ZM["ZMedia pipeline<br/>inspection / processing"]
     MW["Media worker"]
     OW["Operational workers<br/>policies · alerts · retention"]
@@ -184,7 +184,7 @@ ZNode communicates with the service through controlled internal integration/prox
 
 ### SFU sidecar
 
-Group real-time media uses a dedicated **mediasoup SFU sidecar**.
+Group real-time media uses a dedicated **SFU sidecar**.
 
 The managed SFU control service is local to the node, with the standard internal endpoint using:
 
