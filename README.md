@@ -12,6 +12,32 @@ It does **not** publish the proprietary production source code. Instead, it docu
 
 ---
 
+## Product evolution at a glance
+
+ZNode started as a private, self-hosted communication node and progressively evolved into a broader sovereign workspace infrastructure.
+
+What matters is not only the feature set, but the **trajectory**: each layer added operational depth, stronger governance, and a clearer path toward enterprise-grade deployment.
+
+```mermaid
+flowchart LR
+    A[Self-hosted local-first node] --> B[Private messaging and file exchange]
+    B --> C[Structured workspace]
+    C --> D[Group collaboration]
+    D --> E[Voice, video and meetings]
+    E --> F[SFU-based real-time communication]
+    F --> G[Compliance, policy and audit governance]
+    G --> H[Agent-ready controlled execution]
+    H --> I[Maintenance and pilot operations]
+    I --> J[Client and pilot release engineering]
+    J --> K[Sovereign workspace infrastructure]
+```
+
+This progression reflects how ZNode evolved from a communication core into a broader platform designed for organizations that need to control their communications, workflows, data, governance, and operational environment.
+
+For the detailed public milestone narrative, see [`docs/PRODUCT_EVOLUTION.md`](docs/PRODUCT_EVOLUTION.md).
+
+---
+
 ## What ZNode is
 
 ZNode is designed as a private workspace that an organization can operate under its own infrastructure and governance model.
