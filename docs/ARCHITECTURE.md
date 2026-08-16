@@ -54,11 +54,7 @@ The diagram intentionally separates the **application plane**, the **real-time m
 
 In the supported Linux deployment model, **Caddy owns the public HTTPS/TLS boundary**.
 
-The ZNode FastAPI application itself is kept on a local upstream, with the standard deployment using:
-
-- application host: `127.0.0.1`;
-- application port: `8000`;
-- public traffic terminated and proxied by Caddy.
+The ZNode FastAPI application itself is kept on a **local loopback upstream** behind Caddy rather than being exposed directly to the public Internet.
 
 Caddy is responsible for the external HTTP(S) entry point and applies the deployment security headers and request-body limits before proxying requests to ZNode.
 
@@ -152,13 +148,7 @@ Persistent filesystem areas include data such as:
 - user media;
 - chat media and generated media artifacts.
 
-The runtime root used by the standard Linux deployment is:
-
-```text
-/var/lib/zetako-node
-```
-
-The supported deployment keeps writable runtime state inside this controlled node-owned boundary.
+The supported deployment keeps writable runtime state inside a controlled node-owned runtime boundary.
 
 ---
 
@@ -174,11 +164,7 @@ The supported deployment separates the following components:
 
 A dedicated z-connect service handles signaling and RTC control-plane behavior.
 
-The standard Linux deployment binds this service locally, with the managed default using:
-
-```text
-127.0.0.1:8010
-```
+The standard Linux deployment keeps this service on a **local managed control path** inside the node boundary.
 
 ZNode communicates with the service through controlled internal integration/proxy paths rather than treating it as an independent public application.
 
@@ -186,11 +172,7 @@ ZNode communicates with the service through controlled internal integration/prox
 
 Group real-time media uses a dedicated **SFU sidecar**.
 
-The managed SFU control service is local to the node, with the standard internal endpoint using:
-
-```text
-127.0.0.1:8787
-```
+The managed SFU control service remains **local to the node**. Exact internal port assignments are intentionally omitted from this public architecture document.
 
 The SFU is a separate process with its own resource envelope because real-time media forwarding has different CPU, memory, networking, and failure characteristics from the main FastAPI application.
 
@@ -246,7 +228,7 @@ Examples include:
 - media processing;
 - policy processing;
 - alert evaluation;
-- memo processing/retention where enabled.
+- retention and maintenance tasks where enabled.
 
 These are node-local managed services rather than a distributed external queue architecture.
 
@@ -285,13 +267,13 @@ This is the practical meaning of the single-node sovereignty model: the core app
 
 Several services are intentionally bound or operated as **local/internal node components**.
 
-The standard deployment includes local upstreams such as:
+The standard deployment includes:
 
-- FastAPI ZNode application: `127.0.0.1:8000`;
-- z-connect signaling/control service: local managed service, commonly `127.0.0.1:8010`;
-- SFU control endpoint: local managed service, commonly `127.0.0.1:8787`.
+- the ZNode FastAPI application on a local loopback upstream;
+- z-connect as a local managed signaling/control service;
+- the SFU control plane as a local managed service.
 
-These ports describe the standard internal topology, not additional public application endpoints.
+Exact internal port assignments are intentionally omitted from public documentation. The relevant security property is that these application/control services are local/internal rather than additional public application endpoints.
 
 Caddy is the main HTTP/TLS ingress boundary for the application-facing web path.
 
@@ -305,20 +287,7 @@ ZNode's recovery model mirrors the architecture boundary.
 
 A **runtime identity backup** is intended to preserve the complete recoverable identity of a node and includes the essential runtime configuration, secrets, database, and persistent data directories.
 
-The core recovery set includes:
-
-```text
-config/node.json
-config/secrets.json
-config/network_key.json
-
-db/zetako_node.sqlite3
-
-data/uploads/
-data/messaging_files/
-data/workspace_files/
-data/user_media/
-```
+The core recovery set includes node identity/configuration, local SQLite state, and persistent application data such as uploads, messaging files, workspace files, and user media.
 
 Application-data backup flows additionally cover configured application data areas such as chat media and associated database state.
 
@@ -410,6 +379,8 @@ The current ZNode architecture follows several explicit principles:
 
 - [`PRODUCT_EVOLUTION.md`](PRODUCT_EVOLUTION.md) — how ZNode evolved into the current platform.
 - [`DEPLOYMENT.md`](DEPLOYMENT.md) — public deployment evidence and measurement model.
+- [`REFERENCE_DEPLOYMENT.md`](REFERENCE_DEPLOYMENT.md) — supported V1 reference profile.
+- [`DATA_AND_STORAGE_MODEL.md`](DATA_AND_STORAGE_MODEL.md) — local metadata/payload storage model.
 - [`OPERATING_MODES.md`](OPERATING_MODES.md) — Client, Pilot, and Integrated Support boundaries.
 - [`COMPLIANCE_CENTER.md`](COMPLIANCE_CENTER.md) — governance model.
 - [`SECURITY_AND_TESTING.md`](SECURITY_AND_TESTING.md) — validation and security evidence.
