@@ -4,31 +4,57 @@ ZNode's public security documentation is intended to provide evidence of enginee
 
 ## Current test-suite snapshot
 
-ZNode currently tracks **more than 1,500 automated tests** across the product and its supporting services.
+The current ZNode engineering suite contains **1,613 automated tests across 134 test files**.
 
-A detailed public breakdown will be added as the suite is classified for publication. Planned categories include:
+Repository coverage includes:
 
 - backend unit and service tests;
 - API and integration tests;
-- frontend tests;
-- end-to-end user workflows;
-- authentication tests;
-- authorization and permission tests;
+- browser and frontend workflow tests;
+- authentication and route-protection tests;
+- authorization, ACL and permission tests;
 - policy and role regression tests;
 - storage and file-operation tests;
-- meeting and media tests;
-- agent execution tests;
-- confirmation and action-ledger tests;
+- meeting, RTC and media tests;
+- agent registry, scope, ledger and confirmation tests;
 - deployment and migration validation;
 - security regression tests.
 
-The raw test count is useful, but it is not sufficient by itself. Future reports will add execution scope, pass/fail status, release context, and category coverage.
+The current test count describes the automated suite itself. Versioned execution reports can separately publish full-suite pass/fail status, runtime, release context, and category coverage.
+
+## Dependency security snapshot
+
+A dependency audit was executed against the Python dependency set declared in `requirements.txt` using:
+
+```sh
+python3 -m pip_audit -r requirements.txt -f json
+```
+
+The scan reported **0 known dependency vulnerabilities** for the resolved dependency set at the time of the audit.
+
+This is intentionally scoped. It does **not** mean that the complete application is guaranteed to contain no vulnerabilities; it means that the audit tool did not report a known vulnerability in that dependency set during the scan.
+
+## Security controls represented in the current codebase
+
+Current defensive surfaces include evidence of:
+
+- authentication and protected routes;
+- session lifetime and active-session limits;
+- administrative access controls;
+- inter-user and inter-group permission boundaries;
+- workspace ACL and preview controls;
+- login and mutation rate limiting;
+- z-connect HTTP and WebSocket rate limits;
+- audit and administrative event records;
+- agent scope and execution controls;
+- deployment/runtime hardening;
+- regression tests around security-sensitive behavior.
 
 ## Security evidence planned for publication
 
 Public defensive evidence may include:
 
-- authentication and MFA behavior;
+- authentication behavior;
 - session-management rules;
 - role and permission boundaries;
 - privilege-separation tests;
@@ -57,7 +83,7 @@ Examples of information that remains private include:
 
 ## Security testing philosophy
 
-The public record should distinguish between:
+The public record distinguishes between:
 
 ### Functional security tests
 
@@ -73,17 +99,28 @@ Deliberate attempts to break assumptions, bypass controls, abuse inputs, or forc
 
 ### External assessment
 
-Where independent security reviews or penetration tests can be disclosed, they will be documented separately with scope, date, methodology, and remediation status.
+Where independent security reviews or penetration tests can be disclosed, they will be documented separately with scope, methodology, and remediation status.
 
 ## Agent security
 
-Agent-capable infrastructure introduces a separate security surface. ZNode's public evidence will therefore cover:
+Agent-capable infrastructure introduces a separate security surface. ZNode's current public agent model exposes **6 read-only tools** and **0 write tools** in the default registry.
+
+The read-only tools are:
+
+- `audit.search`;
+- `calendar.list_events`;
+- `meetings.list`;
+- `messages.search`;
+- `storage.search`;
+- `users.list`.
+
+Agent security evidence covers:
 
 - agent identity;
 - tool scopes;
 - execution authorization;
 - action logging;
-- confirmation requirements;
+- confirmation infrastructure;
 - rejection behavior for unauthorized tools or scopes;
 - separation between human and agent principals.
 
@@ -91,7 +128,7 @@ Agent-capable infrastructure introduces a separate security surface. ZNode's pub
 
 This document will eventually link to versioned evidence covering:
 
-- test-suite snapshots;
+- full test-suite execution snapshots;
 - security test matrices;
 - dependency audit summaries;
 - permission-boundary validation;
