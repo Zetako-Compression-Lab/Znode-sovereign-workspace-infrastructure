@@ -69,6 +69,30 @@ ZNode is developed as infrastructure rather than as a thin hosted front end. The
 
 ---
 
+## Product surfaces
+
+> **Development environment — representative product surfaces.** These screenshots show an active ZNode development node and do not contain customer production data.
+
+### Command Center
+
+![ZNode Command Center](docs/images/command-center.webp)
+
+### Compliance Center
+
+![ZNode Compliance Center](docs/images/compliance-center.webp)
+
+### Workspace
+
+![ZNode Workspace](docs/images/workspace.webp)
+
+### Meetings
+
+![ZNode Meetings](docs/images/meeting.webp)
+
+See [`docs/PRODUCT_SURFACES.md`](docs/PRODUCT_SURFACES.md) for the complete product-surface set, including **Messaging** and **Audit Logs**.
+
+---
+
 ## Deployment scope — single-node by design
 
 ZNode is intentionally designed as a **single-node sovereign workspace**.
@@ -316,11 +340,17 @@ Targets will never be presented as validated capacity.
 /
 ├── README.md
 └── docs/
+    ├── PRODUCT_SURFACES.md
     ├── PRODUCT_EVOLUTION.md
+    ├── ARCHITECTURE.md
+    ├── REFERENCE_DEPLOYMENT.md
+    ├── DATA_AND_STORAGE_MODEL.md
+    ├── ZNODE_OPERATING_MODEL.md
     ├── DEPLOYMENT.md
     ├── OPERATING_MODES.md
     ├── COMPLIANCE_CENTER.md
     ├── SECURITY_AND_TESTING.md
+    ├── LIVE_LATENCY_BASELINE.md
     └── METRICS_AND_BENCHMARKS.md
 ```
 
@@ -353,6 +383,7 @@ Future additions are expected to include dedicated reports for:
 - test-suite statistics;
 - compliance/governance model;
 - technical diagrams and evidence;
+- product surfaces and development screenshots;
 - product evolution and engineering milestones.
 
 ### Private / controlled distribution
