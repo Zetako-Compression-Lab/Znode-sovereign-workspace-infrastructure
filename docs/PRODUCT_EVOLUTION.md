@@ -2,8 +2,6 @@
 
 ZNode did not begin as a public open-source project. The production code remains proprietary. This page reconstructs the product evolution from the private development history and publishes only high-level, non-sensitive engineering milestones.
 
-As of the current public review, the main development history contains **867 commits**, beginning on **26 April 2026** with `Initial commit - Zetako Node`.
-
 The purpose of this page is not to expose implementation detail. It is to show how the product evolved from a self-hosted communication node into a broader sovereign workspace and operational infrastructure platform.
 
 ---
@@ -36,18 +34,16 @@ sovereign workspace infrastructure
 
 ---
 
-## April 2026 — Initial ZNode baseline
+## Foundation — self-hosted local-first node
 
-The first commit in the current repository history is dated **26 April 2026**.
+The first engineering baseline already described ZNode as a **self-hosted, local-first node runtime** for organizations that wanted private messaging, file exchange and operator-controlled deployment without relying on an external chat transport.
 
-The initial engineering baseline already described ZNode as a **self-hosted, local-first node runtime** for organizations that wanted private messaging, file exchange and operator-controlled deployment without relying on an external chat transport.
-
-The first repository snapshot already included or documented:
+The initial product foundation included or documented:
 
 - local authentication and protected routes;
 - role-based administrator, operator and member surfaces;
 - direct messaging with local SQLite persistence;
-- a structured Document Workspace V1;
+- a structured Document Workspace;
 - file transfer and server-side storage;
 - a CLI-managed runtime lifecycle;
 - shared installer foundations;
@@ -58,25 +54,25 @@ The first repository snapshot already included or documented:
 
 An important architectural decision was already visible at this stage: messaging had moved away from an external Matrix/Synapse transport and into the ZNode runtime itself.
 
-This initial baseline is therefore better understood as the start of the current engineering history, not as a minimal prototype.
+This foundation is therefore better understood as the beginning of the current product architecture, not as a minimal prototype.
 
 ---
 
-## Late April 2026 — Deployment and cryptographic hardening
+## Deployment and cryptographic hardening
 
-Immediately after the initial baseline, engineering work expanded deployment tooling and safer development/runtime onboarding.
+The product then expanded deployment tooling, safer development/runtime onboarding and clearer host boundaries.
 
-The same period also introduced an AEAD payload-encryption path as part of the broader security evolution.
+An AEAD payload-encryption path was also introduced as part of the broader security evolution.
 
-The public lesson from this phase is that deployment and cryptographic boundaries were being treated as product architecture concerns very early in the current repository history.
+The important product lesson from this stage is that deployment and cryptographic boundaries were treated as architecture concerns rather than late-stage add-ons.
 
 ---
 
-## May 2026 — Runtime stabilization and productization
+## Runtime stabilization and productization
 
-By early May, the repository shows dedicated work around stabilizing the **ZNode v2 runtime and RTC flows**.
+ZNode evolved toward a more stable application runtime with dedicated work around RTC flows, session restoration, debugging, packaging and operator behavior.
 
-The product then expanded rapidly across several areas:
+Representative improvements included:
 
 - group-chat MVP and call presence;
 - theme and visual-configuration systems;
@@ -84,17 +80,17 @@ The product then expanded rapidly across several areas:
 - session restoration and debugging tools;
 - continued runtime and deployment hardening.
 
-This phase marks the transition from a collection of communication capabilities toward a more unified application platform.
+This marked the transition from a collection of communication capabilities toward a more unified application platform.
 
 ---
 
-## May–June 2026 — Group collaboration becomes a core workflow
+## Group collaboration becomes a core workflow
 
-Group collaboration evolved from an initial group-chat implementation into a more complete workflow.
+Group collaboration evolved from an initial group-chat implementation into a more complete organizational workflow.
 
 Representative milestones include:
 
-- group chat MVP and presence;
+- group chat and presence;
 - group creation integrated directly into messaging;
 - operator-side group management;
 - mentions;
@@ -107,9 +103,9 @@ The product was no longer just a direct-message system. It was becoming an organ
 
 ---
 
-## June–July 2026 — Branding and controlled organization themes
+## Branding and controlled organization themes
 
-The theme system expanded from user preference into organization-level branding.
+The theme system expanded from user preference into organization-level branding and policy-controlled presentation.
 
 Engineering milestones included:
 
@@ -121,11 +117,11 @@ Engineering milestones included:
 - branded outbound communications;
 - alignment between ZNode themes and organization branding.
 
-This work matters commercially because a self-hosted workspace can become part of the customer's own digital environment rather than looking like a third-party SaaS portal.
+This matters commercially because a self-hosted workspace can become part of the customer's own digital environment rather than looking like a generic third-party SaaS portal.
 
 ---
 
-## July 2026 — Compliance Center and governance layer
+## Compliance Center and governance layer
 
 A major product milestone was the introduction of the **Admin Compliance Center**.
 
@@ -153,9 +149,9 @@ See [`COMPLIANCE_CENTER.md`](COMPLIANCE_CENTER.md).
 
 ---
 
-## July 2026 — Agent-ready infrastructure
+## Agent-ready infrastructure
 
-In July 2026, ZNode introduced an **agent-ready execution model** built around explicit control boundaries.
+ZNode introduced an **agent-ready execution model** built around explicit control boundaries.
 
 Publicly describable milestones include:
 
@@ -174,7 +170,7 @@ This creates a foundation for future AI-assisted workflows while keeping governa
 
 ---
 
-## July 2026 — SFU-based group communication matures
+## SFU-based group communication matures
 
 Real-time communication evolved from early call integration into a more structured RTC architecture.
 
@@ -192,7 +188,7 @@ This is the basis for the SFU performance and capacity reports that will be publ
 
 ---
 
-## August 2026 — Media processing becomes an operational subsystem
+## Media processing becomes an operational subsystem
 
 Media handling was progressively separated into dedicated execution paths instead of remaining incidental request processing.
 
@@ -211,7 +207,7 @@ The architectural direction is to keep expensive media work **bounded, observabl
 
 ---
 
-## August 2026 — Maintenance becomes a product capability
+## Maintenance becomes a product capability
 
 A dedicated **Admin Maintenance Control Center** was introduced and expanded.
 
@@ -229,7 +225,7 @@ This is an important evolution in the ZNode model: a sovereign node must not onl
 
 ---
 
-## August 2026 — Pilot operations and remote maintenance model
+## Pilot operations and remote maintenance model
 
 Pilot deployment work introduced a separate operational model for evaluation environments.
 
@@ -253,11 +249,11 @@ See [`OPERATING_MODES.md`](OPERATING_MODES.md).
 
 ---
 
-## August 2026 — Workspace evolves from storage toward collaboration
+## Workspace evolves from storage toward collaboration
 
 The Workspace continued moving beyond basic file storage.
 
-Recent engineering milestones include:
+Engineering milestones include:
 
 - file previews;
 - browser-style workspace navigation;
@@ -273,11 +269,11 @@ The direction is toward a controlled organizational workspace rather than a simp
 
 ---
 
-## August 2026 — Meetings become a structured workflow
+## Meetings become a structured workflow
 
-Meetings also evolved from basic RTC behavior into a dedicated product workflow.
+Meetings evolved from basic RTC behavior into a dedicated product workflow.
 
-Recent milestones include:
+Milestones include:
 
 - guided meeting creation;
 - scheduled meetings;
@@ -293,7 +289,7 @@ Future public reports will connect these product capabilities to measurable SFU 
 
 ---
 
-## August 2026 — Security hardening continues across the stack
+## Security hardening continues across the stack
 
 Security is not represented as a single completed milestone.
 
@@ -313,13 +309,11 @@ See [`SECURITY_AND_TESTING.md`](SECURITY_AND_TESTING.md).
 
 ---
 
-## Current engineering direction — separate Client and Pilot releases
+## Separate Client and Pilot release engineering
 
-The current development tree contains distinct **client packaging** and **pilot packaging** branches.
+The product evolved toward distinct **client packaging** and **pilot packaging** paths.
 
 The release engineering includes dedicated workflows, bootstrap/install paths and sanitization boundaries intended to distinguish customer-controlled deployments from pilot-specific operational tooling.
-
-These branches are still active engineering work, so this public repository describes them as a **current engineering direction**, not as a universal release guarantee.
 
 The important evolution is the emergence of explicit deployment profiles:
 
